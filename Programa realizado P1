@@ -1,0 +1,109 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+#define ARRAY_SIZE 1000
+
+int *generar_arreglo()
+{
+    int *arreglo = (int *)malloc(ARRAY_SIZE * sizeof(int));
+    if (arreglo == NULL)
+    {
+        printf("Error: No se pudo asignar memoria para el arreglo\n");
+        exit(EXIT_FAILURE);
+    }
+
+    srand(time(NULL));
+    for (int i = 0; i < ARRAY_SIZE; i++)
+    {
+        arreglo[i] = rand() % 1000 + 1; // Números aleatorios entre 1 y 1000
+    }
+
+    return arreglo;
+}
+
+void imprimir_arreglo(int *arreglo)
+{
+    for (int i = 0; i < ARRAY_SIZE; i++)
+    {
+        printf("%d ", arreglo[i]);
+    }
+    printf("\n");
+}
+
+int busqueda_secuencial(int *arreglo, int elemento)
+{
+    for (int i = 0; i < ARRAY_SIZE; i++)
+    {
+        if (arreglo[i] == elemento)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void ordenar_arreglo(int *arreglo)
+{
+    for (int i = 0; i < ARRAY_SIZE - 1; i++)
+    {
+        for (int j = 0; j < ARRAY_SIZE - i - 1; j++)
+        {
+            if (arreglo[j] > arreglo[j + 1])
+            {
+                int temp = arreglo[j];
+                arreglo[j] = arreglo[j + 1];
+                arreglo[j + 1] = temp;
+            }
+        }
+    }
+}
+
+int main()
+{
+    clock_t inicio, fin;
+
+    // Generar arreglo aleatorio
+    inicio = clock();
+    int *arreglo = generar_arreglo();
+    fin = clock();
+    double tiempo_generacion = ((double)(fin - inicio)) / CLOCKS_PER_SEC;
+
+    // Imprimir contenido del arreglo
+    inicio = clock();
+    imprimir_arreglo(arreglo);
+    fin = clock();
+    double tiempo_impresion = ((double)(fin - inicio)) / CLOCKS_PER_SEC;
+
+    // Búsqueda secuencial en el arreglo original
+    int elemento_buscado = arreglo[rand() % ARRAY_SIZE];
+    inicio = clock();
+    int indice = busqueda_secuencial(arreglo, elemento_buscado);
+    fin = clock();
+    double tiempo_busqueda_secuencial = ((double)(fin - inicio)) / CLOCKS_PER_SEC;
+
+    // Ordenar arreglo
+    inicio = clock();
+    ordenar_arreglo(arreglo);
+    fin = clock();
+    double tiempo_ordenamiento = ((double)(fin - inicio)) / CLOCKS_PER_SEC;
+
+    // Búsqueda secuencial en el arreglo ordenado
+    inicio = clock();
+    int indice_ordenado = busqueda_secuencial(arreglo, elemento_buscado);
+    fin = clock();
+    double tiempo_busqueda_ordenada = ((double)(fin - inicio)) / CLOCKS_PER_SEC;
+
+    // Liberar memoria
+    free(arreglo);
+
+    // Tiempos de ejecución
+    printf("\nTiempos de ejecución:\n");
+    printf("Generación del arreglo: %.6f segundos\n", tiempo_generacion);
+    printf("Impresión del arreglo: %.6f segundos\n", tiempo_impresion);
+    printf("Búsqueda secuencial en arreglo original: %.6f segundos\n", tiempo_busqueda_secuencial);
+    printf("Ordenamiento del arreglo: %.6f segundos\n", tiempo_ordenamiento);
+    printf("Búsqueda secuencial en arreglo ordenado: %.6f segundos\n", tiempo_busqueda_ordenada);
+
+    return 0;
+}
